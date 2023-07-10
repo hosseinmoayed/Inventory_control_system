@@ -1,0 +1,79 @@
+{% load thumbnail %}
+
+
+<section class="text-center mb-4">
+    {% for group in product_list %}
+
+            <div class="row wow fadeIn">
+                  {% for product in group %}
+                            <div class="col-lg-3 col-md-6 mb-4">
+
+                        <!--Card-->
+
+                            <div class="card card-sh">
+
+                                      <!--Card image-->
+                                      <div class="view overlay">
+
+                                        <a href="">
+                                            {% thumbnail product.image '260x240' padding=True as im %}
+                                                <img src="{{ im.url }}" class="card-img-top" alt="">
+                                            {% endthumbnail %}
+                                        </a>
+                                        <a href="">
+                                          <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                      </div>
+                                      <!--Card image-->
+
+                                      <!--Card content-->
+
+                                        {% csrf_token %}
+                                      <div class="card-body text-center" style="padding: 5px">
+                                        <!--Category & Title-->
+
+                                        <a href="" class="grey-text">
+                                          <h5>{{ category.name }}</h5>
+                                        </a>
+                                        <h5>
+                                          <strong>
+                                            <a href="" class="dark-grey-text">{{ product.name }}
+                                                <br>
+                                                {% if product.tag %}
+                                                    <span class="badge badge-pill {% if product.tag == 'NEW' %}danger-color{% elif product.tag == 'Bestseller' %}primary-color{% elif product.tag == 'Trending' %}purple{% endif %}" id="tag">{{ product.tag }}</span>
+                                                {% endif %}
+
+
+                                            </a>
+                                          </strong>
+                                        </h5>
+
+                                        <h4 class="font-weight-bold blue-text" id="f-op">
+                                         ${{ product.price}}
+                                        </h4>
+
+                                      <div class="form-outline">
+                                          <input type="number" name="quantity" id="qun{{ product.id }}" class="form-control" />
+                                          <label class="form-label" for="qun{{ product.id }}">Quantity</label>
+                                        </div>
+                                        <button id="send_req" onclick="Send_Request('{{ product.id }}' , '#qun{{ product.id }}')" class="btn btn-success">Send Request</button>
+                                      </div>
+                                      <!--Card content-->
+
+                            </div>
+                            <!--Card-->
+
+                          </div>
+
+                  {% endfor %}
+
+
+            </div>
+
+
+    {% endfor %}
+{% if category.slug %}
+<a class="more" href="{% url 'productlist-page' category=category.slug %}">Show More</a>
+{% endif %}
+</section>
+

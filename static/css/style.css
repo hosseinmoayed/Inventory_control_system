@@ -1,0 +1,50 @@
+body{
+    background: rgb(230, 227, 227);
+}
+.my-card:hover{
+    transform: scale(1.1);
+    transition: 0.2s ease-in-out;
+}
+
+
+
+#tag{
+    font-size: 17px!important;
+    border-radius: 5px!important;
+    position: relative!important;
+    left: 322px;
+    top: 25px;
+}
+
+#tag_i{
+    font-size: 17px!important;
+    border-radius: 5px!important;
+    position: relative!important;
+    left: 705px;
+    top: 25px;
+}
+
+#dash-c {
+    width: 96%!important;
+    position: relative;
+    left: 15px!important;
+}
+
+#inf{
+    position: relative;
+    left: 20px!important;
+}
+
+
+.card-body{
+    padding: 1.2rem!important;
+}
+
+.error_lc {
+    border-color: #e72734!important;
+}
+
+.active-b{
+    background-color: #8fc5de!important;
+    border-radius: .5rem!important;
+}

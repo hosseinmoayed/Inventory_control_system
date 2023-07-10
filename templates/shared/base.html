@@ -1,0 +1,24 @@
+{% load render_partial %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+
+    {% include 'shared/css_refrence.html' %}
+</head>
+<body>
+    {% include 'shared/navbar.html' %}
+    {% if user.is_superuser or user.is_staff %}
+        {% render_partial 'dashboard.views.topside' %}
+    {% endif %}
+
+    {% block content %}
+
+    {% endblock %}
+
+    {% include 'shared/js_refrence.html' %}
+</body>
+</html>

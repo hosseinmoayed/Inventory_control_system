@@ -1,0 +1,59 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}
+    Orders
+{% endblock %}
+
+
+{% block content %}
+     <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-13" style="overflow: scroll;height: 700px">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                        <tr class="text-white">
+                            <th scope="col">#</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Delivery Time(day)</th>
+                            <th scope="col">Seller Company</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ order.product.name }}</td>
+                                <td>{{ order.product.category.name }}</td>
+                                <td>{{ order.quantity }}</td>
+                                <td>{{ order.order_delivery_time }}</td>
+                                <td>
+                                    {{ order.company_name }}
+                                </td>
+                                <td>
+                                    {% if order.status %}
+                                        Received
+                                    {% else %}
+                                        Awaiting receipt...
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!--End Table-->
+{% endblock %}

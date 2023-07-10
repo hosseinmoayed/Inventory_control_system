@@ -1,0 +1,482 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}
+    Products
+{% endblock %}
+
+
+
+{% block content %}
+     <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-4">
+                <div class="border bg-white p-3">
+                    <h4>Add Products</h4>
+                    <hr>
+                    <form action="{% url 'add-product' type='add' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Name</label>
+                            <input required type="text" name="name" step=".01" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPrice1">Price</label>
+                            <input required name="price" type="number" step="any" class="form-control" id="exampleInputPrice1">
+                        </div>
+                        <div class="input-group mb-3">
+                          <label class="input-group-text" for="inputGroupFile01">Upload</label>
+                          <input type="file" name="productphoto" class="form-control" id="inputGroupFile01" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Seller Company</label>
+                            <input required type="text" name="company_name" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Demand (year)</label>
+                            <input required name="D" type="number" step="any" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Holding Cost (year)</label>
+                            <input required name="h" type="number" step="any" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Ordering Cost</label>
+                            <input required name="A" type="number" step="any" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Order Delivery Time (year)</label>
+                            <input required name="L" step="any" type="number" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <div class="form-group ">
+                            <label for="inputState">Category</label>
+                            <select id="inputState" name="category" required class="form-control">
+                                <option>Choose...</option>
+                                {% for category in categories %}
+                                    <option name="{{ category.name }}" value="{{ category.name }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input class="btn btn-success btn-block" type="submit" value="Add Product">
+
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                        <tr class="text-white">
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Q*</th>
+                            <th scope="col">r*</th>
+                            <th scope="col">View EOQ Chart</th>
+                            <th scope="col">View Order Chart</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    {% if products %}
+                        {% for product in products %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.category }}</td>
+                                <td>{% if product.inventory_quantity != None %}{{ product.inventory_quantity  }}{% else %}0{% endif %}</td>
+                                <td>{{ product.eoq }}</td>
+                                <td>{{ product.rop }}</td>
+                                <td><a class="btn btn-info btn-sm " data-mdb-toggle="modal" data-mdb-target="#exampleCentralModal{{ product.id }}" href="">View</a></td>
+                                <td><a class="btn btn-info btn-sm " data-mdb-toggle="modal" data-mdb-target="#exampleCentral{{ product.id }}" href="">View</a></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{#<script src="/static/js/jquery-3.3.1.min.js"></script>#}
+{#    <div class="container">#}
+{#        <div class="row my-5">#}
+{##}
+{#            <div class="col-md-6">#}
+{#                <div class="bg-white">#}
+{#                    <canvas id="myChart1" width="400" height="300"></canvas>#}
+{#                    <script>#}
+{#                        var ctx = document.getElementById('myChart1').getContext('2d');#}
+{##}
+{#                        const xValues = [0  ,10 , 10 , 20 , 20 , 30 , 30 ];#}
+{#                        const yValues = [100 ,0 , 100 , 0 , 100 , 0 , 100];#}
+{#                        var myChart1 = new Chart(ctx, {#}
+{#                            type: 'line',#}
+{#                            data: {#}
+{#                                labels: xValues,#}
+{#                                datasets: [{#}
+{#                                    label: 'Products',#}
+{#                                    data: yValues,#}
+{#                                    backgroundColor: [#}
+{#                                        'rgb(118,186,241)',#}
+{#                                        'rgba(54, 162, 235, 1)',#}
+{##}
+{#                                    ],#}
+{#                                    borderColor: [#}
+{#                                        'rgb(118,186,241)',#}
+{#                                        'rgba(54, 162, 235, 1)',#}
+{##}
+{#                                    ],#}
+{#                                    borderWidth: 1.3#}
+{#                                }]#}
+{#                            },#}
+{#                            options: {#}
+{#                                responsive: true,#}
+{##}
+{#                                scales: {#}
+{#                                    xAxes: [{ticks: {min: 40, max:160}}],#}
+{#                                    yAxes: [{ticks: {min: 6, max:16}}],#}
+{#                                    suggestedMin: -10,#}
+{#                                    suggestedMax: 200,#}
+{#                                    x: {#}
+{#                                        type: 'linear',#}
+{#                                        display: true,#}
+{#                                        title:{#}
+{#                                            display:true,#}
+{#                                            text:'Time',#}
+{#                                            color:'#911',#}
+{#                                            font: {#}
+{#                                            family: 'Times',#}
+{#                                            size: 20,#}
+{#                                            weight: 'bold',#}
+{#                                            lineHeight: 1.2,#}
+{#                                          },#}
+{##}
+{#                                        }#}
+{##}
+{#                                    },#}
+{#                                    y: {#}
+{#                                        display:true,#}
+{#                                        title:{#}
+{#                                            display:true,#}
+{#                                            text:'NS(t)',#}
+{#                                            color:'#191',#}
+{#                                            font: {#}
+{#                                            family: 'Times',#}
+{#                                            size: 20,#}
+{#                                            weight: 'bold',#}
+{#                                            lineHeight: 1.2,#}
+{#                                          },#}
+{##}
+{#                                        }#}
+{#                                    }#}
+{#                                },#}
+{#                                plugins: {#}
+{#                                    title: {#}
+{#                                        display: true,#}
+{#                                        text: 'EOQ'#}
+{#                                    }#}
+{#                                }#}
+{#                            }#}
+{#                        });#}
+{#                    </script>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{##}
+{#        </div>#}
+{#    </div>#}
+    <!--End Table-->
+
+
+
+
+
+
+{% for product in products %}
+        <script>
+            list_data=[{% for product_inv in product.inventory_set.all %}{x:'{{product_inv.zero.created_at}}{{ product_inv.zero.created_at.second }}',y:{{ product_inv.zero.quantity}}},{x:'{{ product_inv.created_at}}{{ product_inv.created_at.second }}',y:{{ product_inv.quantity}}},{% endfor %}]
+            list_data_2=[{% for order in orders %}{% if order.product.id == product.id %}{x:'{{ order.created_at }}{{ order.created_at.second }}',y:{{ order.quantity }}},{% endif %}{% endfor %}]
+        </script>
+
+    <div class="modal fade" id="exampleCentralModal{{ product.id }}" data-mdb-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" data-gtm-vis-first-on-screen-2340190_1302="17249" data-gtm-vis-total-visible-time-2340190_1302="100" data-gtm-vis-has-fired-2340190_1302="1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{ product.name }}</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                    <div class="container">
+                         <div class="">
+                            <div class="">
+                                <div class="">
+                                    <canvas id="myChart{{ product.id }}"></canvas>
+
+                                    <script>
+
+                                        var ctx = document.getElementById('myChart{{ product.id }}').getContext('2d');
+                                        var myChart1 = new Chart(ctx, {
+                                            type: 'line',
+                                            data: {
+                                                datasets: [{
+                                                    label: 'Products',
+                                                    data: list_data,
+                                                    backgroundColor: [
+                                                        'rgb(118,186,241)',
+                                                        'rgba(54, 162, 235, 1)',
+
+                                                    ],
+                                                    borderColor: [
+                                                        'rgb(118,186,241)',
+                                                        'rgba(54, 162, 235, 1)',
+
+                                                    ],
+                                                    borderWidth: 1.3
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+
+                                                scales: {
+
+                                                    suggestedMin: -10,
+                                                    suggestedMax: 200,
+                                                    x: {
+
+                                                        display:true,
+                                                        title:{
+                                                            display:true,
+                                                            text:'Time',
+                                                            color:'#191',
+                                                            font: {
+                                                            family: 'Times',
+                                                            size: 20,
+                                                            weight: 'bold',
+                                                            lineHeight: 1.2,
+                                                          },
+
+                                                        }
+                                                    },
+                                                    y: {
+                                                        display:true,
+                                                        title:{
+                                                            display:true,
+                                                            text:'NS(t)',
+                                                            color:'#191',
+                                                            font: {
+                                                            family: 'Times',
+                                                            size: 20,
+                                                            weight: 'bold',
+                                                            lineHeight: 1.2,
+                                                          },
+
+                                                        }
+                                                    }
+                                                },
+                                                plugins: {
+                                                    title: {
+                                                        display: true,
+                                                        text: 'EOQ'
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    </script>
+                </div>
+                            </div>
+
+
+                        </div>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal fade" id="exampleCentral{{ product.id }}" data-mdb-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" data-gtm-vis-first-on-screen-2340190_1302="17249" data-gtm-vis-total-visible-time-2340190_1302="100" data-gtm-vis-has-fired-2340190_1302="1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{ product.name }}</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                    <div class="container">
+                         <div class="">
+                            <div class="">
+                                <div class="">
+                                    <canvas id="myChart2{{ product.id }}"></canvas>
+
+                                    <script>
+
+                                        var ctx = document.getElementById('myChart2{{ product.id }}').getContext('2d');
+                                        var myChart1 = new Chart(ctx, {
+                                            type: 'line',
+                                            data: {
+                                                datasets: [{
+                                                    label: 'Products',
+                                                    data: list_data_2,
+                                                    backgroundColor: [
+                                                        'rgb(118,186,241)',
+                                                        'rgba(54, 162, 235, 1)',
+
+                                                    ],
+                                                    borderColor: [
+                                                        'rgb(118,186,241)',
+                                                        'rgba(54, 162, 235, 1)',
+
+                                                    ],
+                                                    borderWidth: 1.3
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+
+                                                scales: {
+
+                                                    suggestedMin: -10,
+                                                    suggestedMax: 200,
+                                                    x: {
+
+                                                        display:true,
+                                                        title:{
+                                                            display:true,
+                                                            text:'Time',
+                                                            color:'#191',
+                                                            font: {
+                                                            family: 'Times',
+                                                            size: 20,
+                                                            weight: 'bold',
+                                                            lineHeight: 1.2,
+                                                          },
+
+                                                        }
+                                                    },
+                                                    y: {
+                                                        display:true,
+                                                        title:{
+                                                            display:true,
+                                                            text:'Order',
+                                                            color:'#191',
+                                                            font: {
+                                                            family: 'Times',
+                                                            size: 20,
+                                                            weight: 'bold',
+                                                            lineHeight: 1.2,
+                                                          },
+
+                                                        }
+                                                    }
+                                                },
+                                                plugins: {
+                                                    title: {
+                                                        display: true,
+                                                        text: 'EOQ'
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    </script>
+                </div>
+                            </div>
+
+
+                        </div>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}
+
+{#<script>#}
+{#                                        var ctx = document.getElementById('myChart1').getContext('2d');#}
+{##}
+{#                                        const xValues = ['0  ,10 , 10 , 20 , 20 , 30 , 30 '];#}
+{#                                        const yValues = [100 ,0 , 100 , 0 , 100 , 0 , 100];#}
+{#                                        var myChart1 = new Chart(ctx, {#}
+{#                                            type: 'line',#}
+{#                                            data: {#}
+{#                                                labels: xValues,#}
+{#                                                datasets: [{#}
+{#                                                    label: 'Products',#}
+{#                                                    data: yValues,#}
+{#                                                    backgroundColor: [#}
+{#                                                        'rgb(118,186,241)',#}
+{#                                                        'rgba(54, 162, 235, 1)',#}
+{##}
+{#                                                    ],#}
+{#                                                    borderColor: [#}
+{#                                                        'rgb(118,186,241)',#}
+{#                                                        'rgba(54, 162, 235, 1)',#}
+{##}
+{#                                                    ],#}
+{#                                                    borderWidth: 1.3#}
+{#                                                }]#}
+{#                                            },#}
+{#                                            options: {#}
+{#                                                responsive: true,#}
+{##}
+{#                                                scales: {#}
+{#                                                    xAxes: [{ticks: {min: 40, max:160}}],#}
+{#                                                    yAxes: [{ticks: {min: 6, max:16}}],#}
+{#                                                    suggestedMin: -10,#}
+{#                                                    suggestedMax: 200,#}
+{#                                                    x: {#}
+{#                                                        type: 'linear',#}
+{#                                                        display: true,#}
+{#                                                        title:{#}
+{#                                                            display:true,#}
+{#                                                            text:'Time',#}
+{#                                                            color:'#911',#}
+{#                                                            font: {#}
+{#                                                            family: 'Times',#}
+{#                                                            size: 20,#}
+{#                                                            weight: 'bold',#}
+{#                                                            lineHeight: 1.2,#}
+{#                                                          },#}
+{##}
+{#                                                        }#}
+{##}
+{#                                                    },#}
+{#                                                    y: {#}
+{#                                                        display:true,#}
+{#                                                        title:{#}
+{#                                                            display:true,#}
+{#                                                            text:'NS(t)',#}
+{#                                                            color:'#191',#}
+{#                                                            font: {#}
+{#                                                            family: 'Times',#}
+{#                                                            size: 20,#}
+{#                                                            weight: 'bold',#}
+{#                                                            lineHeight: 1.2,#}
+{#                                                          },#}
+{##}
+{#                                                        }#}
+{#                                                    }#}
+{#                                                },#}
+{#                                                plugins: {#}
+{#                                                    title: {#}
+{#                                                        display: true,#}
+{#                                                        text: 'EOQ'#}
+{#                                                    }#}
+{#                                                }#}
+{#                                            }#}
+{#                                        });#}
+{#                                    </script>#}

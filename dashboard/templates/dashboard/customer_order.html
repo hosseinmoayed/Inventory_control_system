@@ -1,0 +1,64 @@
+{% extends 'shared/base.html' %}
+
+
+{% block title %}
+    Customer Order
+{% endblock %}
+
+
+{% block content %}
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-4"></div>
+            <div class="col-md-13" style="overflow: scroll;height: 700px">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                        <tr class="text-white">
+                            <th scope="col">#</th>
+                            <th scope="col">Company Name</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Inventory</th>
+                            <th scope="col">Quantity ordered</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ order.user.last_name }}</td>
+                                <td>{{ order.product.name }}</td>
+                                <td>{{ order.product.inventory_quantity }}</td>
+                                <td>{{ order.quantity}}</td>
+                                <td>{{ order.created_at }}</td>
+                                <td>
+                                    {% if order.status_2%}
+                                        {% if order.status == 'Confirmed' %}
+                                            <span class="badge badge-success" style="font-size: 13px">{{ order.status }}</span>
+                                         {% else %}
+                                            <span class="badge badge-danger" style="font-size: 13px">{{ order.status }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url 'application-status' id=order.id status='accept' %}" type="button" class="btn btn-success">Accept</a>
+                                        <br><br>
+                                        <a href="{% url 'application-status' id=order.id status='decline' %}" class="btn btn-danger">Decline</a>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!--End Table-->
+{% endblock %}
